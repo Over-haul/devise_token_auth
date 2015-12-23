@@ -97,11 +97,12 @@ module DeviseTokenAuth
         yield if block_given?
 
         redirect_to(@resource.build_auth_url(params[:redirect_url], {
-          token:          token,
-          client_id:      client_id,
-          reset_password: true,
-          config:         params[:config]
-        }))
+            token:          token,
+            client_id:      client_id,
+            reset_password: true,
+            config:         params[:config]
+          }.merge(@resource.try(:reset_custom_params) || {})
+        ))
       else
         render_edit_error
       end
