@@ -56,6 +56,14 @@ module DeviseTokenAuth::Concerns::User
       false
     end
 
+    def access_allowed?
+      true
+    end
+
+    def access_denied?
+      !access_allowed?
+    end
+
     # override devise method to include additional info as opts hash
     def send_confirmation_instructions(opts=nil)
       unless @raw_confirmation_token

@@ -5,6 +5,7 @@ en:
       bad_credentials: "Invalid login credentials. Please try again."
       not_supported: "Use POST /sign_in to sign in. GET is not supported."
       user_not_found: "User was not found or was not logged in."
+      deactivated: "User was deactivated."
     token_validations:
       invalid: "Invalid login credentials"
     registrations:
@@ -14,6 +15,7 @@ en:
       account_with_uid_destroyed: "Account with UID '%{uid}' has been destroyed."
       account_to_destroy_not_found: "Unable to locate account for destruction."
       user_not_found: "User not found."
+      deactivated: "User was deactivated."
     passwords:
       missing_email: "You must provide an email address."
       missing_redirect_url: "Missing redirect URL."
@@ -23,6 +25,7 @@ en:
       password_not_required: "This account does not require a password. Sign in using your '%{provider}' account instead."
       missing_passwords: "You must fill out the fields labeled 'Password' and 'Password confirmation'."
       successfully_updated: "Your password has been successfully updated."
+      deactivated: "User was deactivated."
   errors:
     messages:
       already_in_use: "already in use"

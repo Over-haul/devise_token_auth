@@ -70,7 +70,7 @@ module DeviseTokenAuth
         end
       rescue ActiveRecord::RecordNotUnique
         clean_up_passwords @resource
-        render_create_error_email_already_exists
+        @resource.try(:access_denied?) ? render_create_error_deactivated : render_create_error_email_already_exists
       end
     end
 
@@ -145,6 +145,14 @@ module DeviseTokenAuth
         data:   resource_data,
         errors: [I18n.t("devise_token_auth.registrations.email_already_exists", email: @resource.email)]
       }, status: 422
+    end
+
+    def render_create_error_deactivated
+      render json: {
+        status: 'error',
+        data:   @resource.as_json,
+        errors: [I18n.t("devise_token_auth.registrations.deactivated", email: @resource.email)]
+      }, status: 403
     end
 
     def render_update_success
