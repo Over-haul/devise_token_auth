@@ -46,7 +46,7 @@ module DeviseTokenAuth
       @errors = nil
       @error_status = 400
 
-      if @resource
+      if @resource && @resource.access_allowed?
         yield if block_given?
         @resource.send_reset_password_instructions({
           email: @email,
@@ -61,7 +61,8 @@ module DeviseTokenAuth
           @errors = @resource.errors
         end
       else
-        @errors = [I18n.t("devise_token_auth.passwords.user_not_found", email: @email)]
+        message = @resource.try(:access_denied?) ? "deactivated" : "user_not_found"
+        @errors = [I18n.t("devise_token_auth.passwords.#{message}", email: @email)]
         @error_status = 404
       end
 
@@ -76,7 +77,7 @@ module DeviseTokenAuth
         reset_password_token: resource_params[:reset_password_token]
       })
 
-      if @resource and @resource.id
+      if @resource && @resource.id && @resource.access_allowed?
         client_id  = SecureRandom.urlsafe_base64(nil, false)
         token      = SecureRandom.urlsafe_base64(nil, false)
         token_hash = BCrypt::Password.create(token)
@@ -104,7 +105,7 @@ module DeviseTokenAuth
           }.merge(@resource.try(:reset_custom_params) || {})
         ))
       else
-        render_edit_error
+        @resource.try(:access_denied?) ? render_error_deactivated : render_edit_error
       end
     end
 
@@ -112,6 +113,11 @@ module DeviseTokenAuth
       # make sure user is authorized
       unless @resource
         return render_update_error_unauthorized
+      end
+
+      # make sure user is active
+      unless @resource.access_allowed?
+        return render_error_deactivated
       end
 
       # make sure account doesn't use oauth2 provider
@@ -189,6 +195,14 @@ module DeviseTokenAuth
         success: false,
         errors: ['Unauthorized']
       }, status: 401
+    end
+
+    def render_error_deactivated
+      render json: {
+        status: 'error',
+        data:   @resource.as_json,
+        errors: [I18n.t("devise_token_auth.passwords.deactivated", email: @resource.email)]
+      }, status: 403
     end
 
     def render_update_error_password_not_required

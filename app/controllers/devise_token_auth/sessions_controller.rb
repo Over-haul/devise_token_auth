@@ -45,6 +45,8 @@ module DeviseTokenAuth
         yield if block_given?
 
         render_create_success
+      elsif @resource && !@resource.try(:active_for_authentication?) && @resource.try(:access_denied?)
+        render_create_error_deactivated
       elsif @resource and not (!@resource.respond_to?(:active_for_authentication?) or @resource.active_for_authentication?)
         render_create_error_not_confirmed
       else
@@ -122,6 +124,12 @@ module DeviseTokenAuth
     def render_create_error_bad_credentials
       render json: {
         errors: [I18n.t("devise_token_auth.sessions.bad_credentials")]
+      }, status: 401
+    end
+
+    def render_create_error_deactivated
+      render json: {
+        errors: [I18n.t("devise_token_auth.sessions.deactivated")]
       }, status: 401
     end
 
