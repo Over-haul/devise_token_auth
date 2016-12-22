@@ -26,7 +26,11 @@ module DeviseTokenAuth
           q = "BINARY " + q
         end
 
-        @resource = resource_class.where(q, q_value).first
+        if respond_to?(:current_portal) && current_portal
+          @resource = resource_class.where(q, q_value).where(portal_id: current_portal.id).first
+        else
+          @resource = resource_class.where(q, q_value).first
+        end
       end
 
       if @resource and valid_params?(field, q_value) and @resource.valid_password?(resource_params[:password]) and (!@resource.respond_to?(:active_for_authentication?) or @resource.active_for_authentication?)
