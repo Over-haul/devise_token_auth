@@ -106,7 +106,7 @@ module DeviseTokenAuth
         ))
       else
         @resource.try(:access_denied?) ? render_error_deactivated : redirect_to(@resource.build_url(params[:invalid_redirect_url], {
-          message: 'Oops, that link has expired. Please enter your email below to start again.'
+          message: true
         }))
       end
     end
