@@ -105,10 +105,8 @@ module DeviseTokenAuth
           }.merge(@resource.try(:reset_custom_params) || {})
         ))
       else
-        @resource.try(:access_denied?) ? render_error_deactivated : redirect_to(@resource.build_auth_url(params[:invalid_redirect_url], {
-          message: 'Oops, that link has expired. Please enter your email below to start again.',
-          client_id: client_id,
-          config: params[:config]  
+        @resource.try(:access_denied?) ? render_error_deactivated : redirect_to(@resource.build_url(params[:invalid_redirect_url], {
+          message: 'Oops, that link has expired. Please enter your email below to start again.'
         }))
       end
     end
