@@ -37,6 +37,7 @@ module DeviseTokenAuth
         # create client id
         @client_id = SecureRandom.urlsafe_base64(nil, false)
         @token     = SecureRandom.urlsafe_base64(nil, false)
+        @resource.pusher_token = SecureRandom.urlsafe_base64(nil, false)
 
         @resource.tokens[@client_id] = {
           token: BCrypt::Password.create(@token),
