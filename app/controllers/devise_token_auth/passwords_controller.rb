@@ -132,7 +132,7 @@ module DeviseTokenAuth
         return render_update_error_missing_password
       end
 
-      if @resource.send(resource_update_method, password_resource_params.merge(force_change_password: false))
+      if @resource.send(resource_update_method, password_resource_params.merge(force_change_password: false, status: 'active'))
         @resource.allow_password_change = false
 
         yield if block_given?
