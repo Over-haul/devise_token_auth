@@ -67,6 +67,10 @@ module DeviseTokenAuth
       if user and client_id and user.tokens[client_id]
         user.tokens.delete(client_id)
         user.save!
+        if user.has_attribute?(:player_id) && mobile_devise?
+          user.update_columns(player_id: nil)
+        end
+
 
         yield if block_given?
 
@@ -151,6 +155,10 @@ module DeviseTokenAuth
 
 
     private
+
+    def mobile_devise?
+      request.headers['Client-Device'] == 'mob'
+    end
 
     def resource_params
       params.permit(*params_for_resource(:sign_in))
