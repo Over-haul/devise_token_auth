@@ -105,7 +105,9 @@ module DeviseTokenAuth
           }.merge(@resource.try(:reset_custom_params) || {})
         ))
       else
-        @resource.try(:access_denied?) ? render_error_deactivated : render_edit_error
+        @resource.try(:access_denied?) ? render_error_deactivated : redirect_to(@resource.build_url(params[:invalid_redirect_url], {
+          message: true
+        }))
       end
     end
 
@@ -130,7 +132,7 @@ module DeviseTokenAuth
         return render_update_error_missing_password
       end
 
-      if @resource.send(resource_update_method, password_resource_params)
+      if @resource.send(resource_update_method, password_resource_params.merge(force_change_password: false, status: 'active'))
         @resource.allow_password_change = false
 
         yield if block_given?

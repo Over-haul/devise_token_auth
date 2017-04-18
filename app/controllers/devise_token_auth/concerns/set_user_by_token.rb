@@ -68,7 +68,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
   def update_auth_header
     # cannot save object if model has invalid params
-    return unless @resource and @resource.valid? and @client_id
+    return unless @resource and @client_id
 
     # Generate new client_id with existing authentication
     @client_id = nil unless @used_auth_by_token
